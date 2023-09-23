@@ -1,0 +1,24 @@
+{
+  "root": true,
+  "ignorePatterns": [
+    "node_modules",
+    "build",
+    "vite.config.ts"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "env": {
+    "es2021": true,
+    "browser": true,
+    "node": true
+  },
+  "extends": "standard-with-typescript",
+  "rules": {
+    "semi": ["off"],
+    "@typescript-eslint/strict-boolean-expressions": ["off"],
+    "@typescript-eslint/consistent-type-definitions": ["off"],
+    "@typescript-eslint/brace-style": ["error", "stroustrup"]
+  }
+}
