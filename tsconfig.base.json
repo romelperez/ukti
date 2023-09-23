@@ -6,6 +6,7 @@
     "strict": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
     "removeComments": true,
     "baseUrl": ".",
     "rootDir": "."
