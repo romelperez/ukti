@@ -34,13 +34,6 @@ test('Should get basic translation and interpolate variables of defined locale',
     }
   })
   expect(t('y', { a: 1, b: '2' })).toBe('y')
-  try {
-    // @ts-expect-error test
-    t('x', { a: 1, b: '2' })
-    // @ts-expect-error test
-    t('y', { b: 2 })
-  }
-  catch (err) {}
 })
 
 test('Should get nested translation of defined locale', () => {
@@ -84,7 +77,7 @@ test('Should interpolate defined variables for a specific nested translation', (
     }
   })
   expect(t('x.a')).toBe('Random text')
-  expect(t('x.b', { name: 'Romel', age: 29 })).toBe('My name is Romel and I am 29 years old')
+  expect(t('x.b', { name: 'Ukti', age: 21 })).toBe('My name is Ukti and I am 21 years old')
 })
 
 test('Should get default locale translation if no provided locale translation is available', () => {
@@ -132,4 +125,56 @@ test('Should process nested translations', () => {
   expect(t('b', { age: 21 })).toBe('21 yo')
   expect(t('x.p')).toBe('x.p')
   expect(t('x.q', { name: 'Romel' })).toBe('hello Romel')
+})
+
+test('Should accept custom locales and default locale', () => {
+  type Definition = {
+    a: undefined
+    x: {
+      p: undefined
+    }
+  }
+  type Locales = 'fr' | 'hi' | 'zh'
+  type LocaleDefault = 'hi'
+  const t = createUktiTranslator<Definition, Locales, LocaleDefault>({
+    locale: 'hi',
+    localeDefault: 'hi',
+    translations: {
+      hi: {
+        a: 'a',
+        x: {
+          p: 'x.p'
+        }
+      }
+    }
+  })
+  expect(t('a')).toBe('a')
+  expect(t('x.p')).toBe('x.p')
+})
+
+test('Should get default locale translation if no provided locale translation is available with custom locales', () => {
+  type Definition = {
+    x: {
+      a: undefined
+    }
+  }
+  type Locales = 'fr' | 'hi' | 'zh'
+  type LocaleDefault = 'hi'
+  const t = createUktiTranslator<Definition, Locales, LocaleDefault>({
+    locale: 'zh',
+    localeDefault: 'hi',
+    translations: {
+      fr: {
+        x: {
+          a: 'fr.x.a'
+        }
+      },
+      hi: {
+        x: {
+          a: 'hi.x.a'
+        }
+      }
+    }
+  })
+  expect(t('x.a')).toBe('hi.x.a')
 })

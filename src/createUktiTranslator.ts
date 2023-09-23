@@ -1,7 +1,13 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
 import template from 'lodash/template'
-import type { UktiLocales } from './types'
+import type {
+  UktiLocales,
+  UktiDefinitionItemVariables,
+  UktiDefinitionItem,
+  UktiDefinition,
+  UktiTranslations
+} from './types'
 import { UKTI_LOCALE_DEFAULT } from './constants'
 
 // For text templates with variables in "string {{variable}} string..." format.
@@ -15,35 +21,21 @@ const renderTextTemplate = <V extends Record<string, unknown> = Record<string, u
   return compiled(vars)
 }
 
-type BaseItemVariables = [Record<string, unknown>]
-
-type BaseItem = undefined | BaseItemVariables
-
-type BaseDefinition = Record<string, BaseItem | Record<string, BaseItem>>
-
-type TranslationValues<Definition extends BaseDefinition> = {
-  [P in keyof Definition]: Definition[P] extends BaseItemVariables
-    ? string
-    : undefined extends Definition[P]
-      ? string
-      : Definition[P] extends Record<string, BaseItem>
-        ? Record<keyof Definition[P], string>
-        : never
-}
-
-type UktiTranslations<Definition extends BaseDefinition, Locales extends UktiLocales = UktiLocales, LocaleDefault extends UktiLocales = typeof UKTI_LOCALE_DEFAULT>
-  = Partial<Record<Locales, TranslationValues<Definition>>> & Record<LocaleDefault, TranslationValues<Definition>>
-
 const createUktiTranslator = <
-  Definition extends BaseDefinition,
+  Definition extends UktiDefinition,
   Locales extends UktiLocales = UktiLocales,
   LocaleDefault extends UktiLocales = typeof UKTI_LOCALE_DEFAULT
 >(
     props: {
       translations: UktiTranslations<Definition, Locales, LocaleDefault>
       locale: Locales
-      localeDefault?: LocaleDefault
-    }
+    } & (
+      LocaleDefault extends typeof UKTI_LOCALE_DEFAULT ? {
+        localeDefault?: LocaleDefault
+      } : {
+        localeDefault: LocaleDefault
+      }
+    )
   ) => {
   const { translations, locale, localeDefault } = props
 
@@ -55,9 +47,9 @@ const createUktiTranslator = <
           }[keyof Definition[A]]
         : [`${string & A}`, Definition[A]]
     }[keyof Definition],
-    Path extends Dictionary extends [infer A, BaseItem] ? A : never,
+    Path extends Dictionary extends [infer A, UktiDefinitionItem] ? A : never,
     Item extends Dictionary extends [Path, infer B] ? B : never,
-    Params extends Item extends BaseItemVariables ? Item : [undefined?]
+    Params extends Item extends UktiDefinitionItemVariables ? Item : [undefined?]
   >(
     path: Path,
     ...params: Params
@@ -89,8 +81,8 @@ const createUktiTranslator = <
       }
       catch (err) {
         throw new Error(
-          `The translation for the key "${path}" did not receive the expected variables. ${
-            err instanceof Error ? `${err.message}.` : ''
+          `The translation for the key "${path}" did not receive the expected variables.${
+            err instanceof Error ? ` ${err.message}.` : ''
           }`
         )
       }
@@ -100,5 +92,4 @@ const createUktiTranslator = <
   }
 }
 
-export type { UktiTranslations }
 export { createUktiTranslator }

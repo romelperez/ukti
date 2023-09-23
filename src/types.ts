@@ -182,3 +182,24 @@ export type UktiLocales =
   | 'yo'
   | 'za'
   | 'zu'
+
+export type UktiDefinitionItemVariables = [Record<string, unknown>]
+
+export type UktiDefinitionItem = undefined | UktiDefinitionItemVariables
+
+export type UktiDefinition = Record<string, UktiDefinitionItem | Record<string, UktiDefinitionItem>>
+
+type UktiTranslationValues<Definition extends UktiDefinition> = {
+  [P in keyof Definition]: Definition[P] extends UktiDefinitionItemVariables
+    ? string
+    : undefined extends Definition[P]
+      ? string
+      : Definition[P] extends Record<string, UktiDefinitionItem>
+        ? Record<keyof Definition[P], string>
+        : never
+}
+
+type UktiLocaleDefault = 'en'
+
+export type UktiTranslations<Definition extends UktiDefinition, Locales extends UktiLocales = UktiLocales, LocaleDefault extends UktiLocales = UktiLocaleDefault>
+  = Partial<Record<Locales, UktiTranslationValues<Definition>>> & Record<LocaleDefault, UktiTranslationValues<Definition>>
