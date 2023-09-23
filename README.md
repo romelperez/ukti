@@ -38,6 +38,9 @@ import { createUktiTranslator } from 'ukti/build/umd/ukti.umd.cjs'
 
 ## Basic Usage
 
+Ukti accepts any [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
+locale codes for translations.
+
 ```ts
 import { createUktiTranslator } from 'ukti'
 
@@ -58,6 +61,13 @@ const t = createUktiTranslator<Definition>({
         label: 'Type your language',
         error: 'The language {{name}} is invalid.'
       }
+    },
+    es: {
+      title: 'Idioma',
+      form: {
+        label: 'Escribe tu idioma',
+        error: 'El idioma {{name}} no está soportado.'
+      }
     }
   }
 })
@@ -66,3 +76,55 @@ console.log(t('title')) // 'Language'
 console.log(t('form.label')) // 'Type your language'
 console.log(t('form.error', { name: 'Spanglish' })) // 'The language Spanglish is invalid.'
 ```
+
+If the used locale is not defined in the translations, the default locale is used.
+If no configured, `en` (English) is used.
+
+The translations object definition can only have two levels of depth for simplicity.
+
+## Locales Constraint
+
+The availables locales and default locale can be specified to constraint the translations.
+All translations are optional, except the default one.
+
+```ts
+import { createUktiTranslator } from 'ukti'
+
+type Definition = {
+  title: undefined
+  form: {
+    label: undefined
+    error: [{ name: string }]
+  }
+}
+type Locales = 'es' | 'fr' | 'hi'
+type LocaleDefault = 'es'
+
+const t = createUktiTranslator<Definition, Locales, LocaleDefault>({
+  locale: 'hi',
+  localeDefault: 'es',
+  translations: {
+    es: {
+      title: 'Idioma',
+      form: {
+        label: 'Escribe tu idioma',
+        error: 'El idioma {{name}} no está soportado.'
+      }
+    },
+    fr: {
+      title: 'Langue',
+      form: {
+        label: 'Tapez votre langue',
+        error: "La langue {{name}} n'est pas valide."
+      }
+    }
+  }
+})
+
+console.log(t('title')) // 'Idioma'
+console.log(t('form.label')) // 'Escribe tu idioma'
+console.log(t('form.error', { name: 'Spanglish' })) // 'El idioma Spanglish no está soportado.'
+```
+
+If the specified locale to be used is not defined (`hi`) then the default
+locale (`es`) is used.

@@ -29,6 +29,7 @@ const createUktiTranslator = <
     props: {
       translations: UktiTranslations<Definition, Locales, LocaleDefault>
       locale: Locales
+      throwIfError?: boolean
     } & (
       LocaleDefault extends typeof UKTI_LOCALE_DEFAULT ? {
         localeDefault?: LocaleDefault
@@ -37,7 +38,7 @@ const createUktiTranslator = <
       }
     )
   ) => {
-  const { translations, locale, localeDefault } = props
+  const { translations, locale, localeDefault, throwIfError } = props
 
   return <
     Dictionary extends {
@@ -80,11 +81,16 @@ const createUktiTranslator = <
         return renderTextTemplate(template, variables)
       }
       catch (err) {
-        throw new Error(
-          `The translation for the key "${path}" did not receive the expected variables.${
-            err instanceof Error ? ` ${err.message}.` : ''
-          }`
-        )
+        const errorMessage = `The translation for the key "${path}" did not receive the expected variables.${
+          err instanceof Error ? ` ${err.message}.` : ''
+        }`
+
+        if (throwIfError) {
+          throw new Error(errorMessage)
+        }
+        else {
+          console.error(errorMessage)
+        }
       }
     }
 
