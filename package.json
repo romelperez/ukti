@@ -64,6 +64,6 @@
     "test-types": "vitest typecheck",
     "test-unit": "vitest",
     "test": "npm run clean && npm run build && npm run lint && npm run test-types -- --run && npm run test-unit -- --run",
-    "prepublishOnly": "npm run integration"
+    "prepublishOnly": "npm run test"
   }
 }
