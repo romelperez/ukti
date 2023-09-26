@@ -81,15 +81,14 @@ const createUktiTranslator = <
         return renderTextTemplate(template, variables)
       }
       catch (err) {
-        const errorMessage = `The translation for the key "${path}" did not receive the expected variables.${
-          err instanceof Error ? ` ${err.message}.` : ''
-        }`
+        const error = err instanceof Error ? ` ${err.message}.` : ''
+        const message = `Ukti translation for the key "${path}" did not receive the expected variables.${error}`
 
         if (throwIfError) {
-          throw new Error(errorMessage)
+          throw new Error(message)
         }
         else {
-          console.error(errorMessage)
+          console.error(message)
         }
       }
     }
