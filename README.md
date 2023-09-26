@@ -138,17 +138,18 @@ words based on conditions.
 import { createUktiTranslator } from 'ukti'
 
 type Definition = {
-  productsInStock: undefined
+  stock: undefined
 }
 
 const t = createUktiTranslator<Definition>({
   locale: 'en',
   translations: {
     en: {
-      productsInStock: 'There {{qty === 1 ? "is" : "are"}} {{qty}} product{{qty === 1 ? "" : "s"}} available'
+      stock: 'There {{qty === 1 ? "is" : "are"}} {{qty}} product{{qty === 1 ? "" : "s"}} available'
     }
   }
 })
 
-console.log(t('productsInStock', { qty: 3 })) // 'There are 3 products available'
+console.log(t('stock', { qty: 1 })) // 'There is 1 product available'
+console.log(t('stock', { qty: 3 })) // 'There are 3 products available'
 ```
