@@ -2,7 +2,7 @@
 
 # Ukti (उक्ति)
 
-[![version](https://img.shields.io/npm/y/ukti.svg)](https://npmjs.org/package/ukti)
+[![version](https://img.shields.io/npm/v/ukti)](https://npmjs.org/package/ukti)
 [![tests](https://github.com/romelperez/ukti/workflows/tests/badge.svg)](https://github.com/romelperez/ukti/actions)
 [![codefactor](https://www.codefactor.io/repository/github/romelperez/ukti/badge)](https://www.codefactor.io/repository/github/romelperez/ukti)
 [![npm bundle size](https://img.shields.io/bundlephobia/minzip/ukti.svg)](https://bundlephobia.com/package/ukti)
@@ -78,7 +78,7 @@ console.log(t('form.error', { name: 'Spanglish' })) // 'The language Spanglish i
 ```
 
 If the used locale is not defined in the translations, the default locale is used.
-If no configured, `en` (English) is used.
+If no configured, `'en'` (English) is used.
 
 The translations object definition can only have two levels of depth for simplicity.
 
@@ -126,5 +126,29 @@ console.log(t('form.label')) // 'Escribe tu idioma'
 console.log(t('form.error', { name: 'Spanglish' })) // 'El idioma Spanglish no está soportado.'
 ```
 
-If the specified locale to be used is not defined (`hi`) then the default
-locale (`es`) is used.
+If the specified locale to be used is not defined (`'hi'`) then the default
+locale (`'es'`) is used.
+
+## Templates
+
+Translations texts are templates supporting variables. e.g. displaying different
+words based on conditions.
+
+```ts
+import { createUktiTranslator } from 'ukti'
+
+type Definition = {
+  productsInStock: undefined
+}
+
+const t = createUktiTranslator<Definition>({
+  locale: 'en',
+  translations: {
+    en: {
+      productsInStock: 'There {{qty === 1 ? "is" : "are"}} {{qty}} product{{qty === 1 ? "" : "s"}} available'
+    }
+  }
+})
+
+console.log(t('productsInStock', { qty: 3 })) // 'There are 3 products available'
+```
