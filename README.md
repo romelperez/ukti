@@ -1,4 +1,4 @@
-![](https://github.com/romelperez/ukti/raw/main/ukti.jpg)
+![](https://github.com/romelperez/ukti/raw/main/ukti.png)
 
 # Ukti (उक्ति)
 
