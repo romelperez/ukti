@@ -129,6 +129,9 @@ console.log(t('form.error', { name: 'Spanglish' })) // 'El idioma Spanglish no e
 If the specified locale to be used is not defined (`'hi'`) then the default
 locale (`'es'`) is used.
 
+Locales translations are optional (except the default one) but the all definition
+properties have to be specified.
+
 ## Templates
 
 Translations texts are templates supporting variables with optional conditionals.
@@ -138,18 +141,48 @@ e.g. displaying different words based on conditions.
 import { createUktiTranslator } from 'ukti'
 
 type Definition = {
-  stock: undefined
+  stock: [{ qty: number, isUnit: boolean }]
 }
 
 const t = createUktiTranslator<Definition>({
   locale: 'en',
   translations: {
     en: {
-      stock: 'There {{qty === 1 ? "is" : "are"}} {{qty}} product{{qty === 1 ? "" : "s"}} available'
+      stock: 'There {{isUnit ? "is" : "are"}} {{qty}} product{{isUnit ? "" : "s"}} available'
     }
   }
 })
 
-console.log(t('stock', { qty: 1 })) // 'There is 1 product available'
-console.log(t('stock', { qty: 3 })) // 'There are 3 products available'
+console.log(t('stock', { qty: 1, isUnit: true })) // 'There is 1 product available'
+console.log(t('stock', { qty: 3, isUnit: false })) // 'There are 3 products available'
 ```
+
+The variables can be formatted using the native JavaScript [`Intl`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl)
+object methods before providing them to the translator.
+
+```ts
+import { createUktiTranslator } from 'ukti'
+
+type Definition = {
+  list: [{ items: string }]
+}
+
+const t = createUktiTranslator<Definition>({
+  locale: 'en',
+  translations: {
+    en: {
+      list: 'The land vehicles used are {{items}} in the countryside.'
+    }
+  }
+})
+
+const items = new Intl
+  .ListFormat('en', { style: 'long', type: 'conjunction' })
+  .format(['Motorcycle', 'Bus', 'Car'])
+
+console.log(t('list', { items }))
+// 'The land vehicles used are Motorcycle, Bus, and Car in the countryside.'
+```
+
+Ukti does not support comparison operators such as `===`, `>`, or `<=` in the
+template conditionals.
