@@ -10,7 +10,7 @@
 [![github stars](https://img.shields.io/github/stars/romelperez/ukti.svg?style=social&label=stars)](https://github.com/romelperez/ukti)
 [![license](https://img.shields.io/github/license/romelperez/ukti.svg)](https://github.com/romelperez/ukti/blob/main/LICENSE)
 
-Type-safe l10n and i18n JavaScript utility.
+~0.7kB Type-safe l10n and i18n JavaScript utility.
 
 "Ukti" from Sanskrit "उक्ति" translates Speech or Language.
 

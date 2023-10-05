@@ -1,10 +1,10 @@
 {
   "name": "ukti",
-  "version": "1.0.3",
+  "version": "2.0.0",
   "publishConfig": {
     "access": "public"
   },
-  "description": "Type-safe l10n and i18n JavaScript utility.",
+  "description": "~0.7kB Type-safe l10n and i18n JavaScript utility.",
   "keywords": [
     "l10n",
     "i18n",
