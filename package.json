@@ -32,12 +32,8 @@
   "module": "./build/esm/index.js",
   "main": "./build/cjs/index.js",
   "unpkg": "./build/umd/ukti.umd.cjs",
-  "peerDependencies": {
-    "lodash": "4"
-  },
   "devDependencies": {
     "@build-script/typescript-transformer-append-js-extension": "^1.0.9",
-    "@types/lodash": "^4.14.199",
     "@typescript-eslint/eslint-plugin": "^6.7.0",
     "eslint": "^8.49.0",
     "eslint-config-standard-with-typescript": "^39.0.0",
@@ -45,7 +41,6 @@
     "eslint-plugin-n": "^16.1.0",
     "eslint-plugin-promise": "^6.1.1",
     "husky": "^8.0.3",
-    "lodash": "^4.17.21",
     "ttypescript": "^1.5.15",
     "typescript": "4.9",
     "vite": "^4.4.9",

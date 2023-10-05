@@ -19,7 +19,7 @@ Type-safe l10n and i18n JavaScript utility.
 For any ESM and CommonJS JavaScript environment. If TypeScript is used, version 4.5+ is required.
 
 ```bash
-npm install ukti
+npm i ukti
 ```
 
 For UMD version:
@@ -131,8 +131,8 @@ locale (`'es'`) is used.
 
 ## Templates
 
-Translations texts are templates supporting variables. e.g. displaying different
-words based on conditions.
+Translations texts are templates supporting variables with optional conditionals.
+e.g. displaying different words based on conditions.
 
 ```ts
 import { createUktiTranslator } from 'ukti'

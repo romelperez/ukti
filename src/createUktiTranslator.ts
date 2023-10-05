@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
-import template from 'lodash/template'
 import type {
   UktiLocales,
   UktiDefinitionItemVariables,
@@ -9,17 +8,7 @@ import type {
   UktiTranslations
 } from './types'
 import { UKTI_LOCALE_DEFAULT } from './constants'
-
-// For text templates with variables in "string {{variable}} string..." format.
-const textTemplateInterpolate = /{{([\s\S]+?)}}/g
-
-const renderTextTemplate = <V extends Record<string, unknown> = Record<string, unknown>>(
-  text: string,
-  vars: V
-): string => {
-  const compiled = template(text, { interpolate: textTemplateInterpolate })
-  return compiled(vars)
-}
+import { renderTemplate } from './internal/renderTemplate'
 
 const createUktiTranslator = <
   Definition extends UktiDefinition,
@@ -78,7 +67,7 @@ const createUktiTranslator = <
 
     if (variables) {
       try {
-        return renderTextTemplate(template, variables)
+        return renderTemplate(template, variables)
       }
       catch (err) {
         const error = err instanceof Error ? ` ${err.message}.` : ''
