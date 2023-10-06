@@ -79,3 +79,107 @@ test('Should render template conditional with empty strings', () => {
   expect(t('stock', { qty: 1, isUnit: true })).toBe('There is 1 product available')
   expect(t('stock', { qty: 3, isUnit: false })).toBe('There are 3 products available')
 })
+
+test('Should render template conditional with comparator "=="', () => {
+  type Definition = { x: [{ w: number }] }
+  const t = createUktiTranslator<Definition>({
+    locale: 'en',
+    translations: { en: { x: 'product{{w == 1 ? "" : "s"}}' } }
+  })
+  expect(t('x', { w: 1 })).toBe('product')
+  expect(t('x', { w: 3 })).toBe('products')
+})
+
+test('Should render template conditional with comparator "==="', () => {
+  type Definition = { x: [{ w: number }] }
+  const t = createUktiTranslator<Definition>({
+    locale: 'en',
+    translations: { en: { x: 'product{{w === 1 ? "" : "s"}}' } }
+  })
+  expect(t('x', { w: 1 })).toBe('product')
+  expect(t('x', { w: 3 })).toBe('products')
+})
+
+test('Should render template conditional with comparator "!="', () => {
+  type Definition = { x: [{ w: number }] }
+  const t = createUktiTranslator<Definition>({
+    locale: 'en',
+    translations: { en: { x: 'product{{w != 1 ? "s" : ""}}' } }
+  })
+  expect(t('x', { w: 1 })).toBe('product')
+  expect(t('x', { w: 3 })).toBe('products')
+})
+
+test('Should render template conditional with comparator "!=="', () => {
+  type Definition = { x: [{ w: number }] }
+  const t = createUktiTranslator<Definition>({
+    locale: 'en',
+    translations: { en: { x: 'product{{w !== 1 ? "s" : ""}}' } }
+  })
+  expect(t('x', { w: 1 })).toBe('product')
+  expect(t('x', { w: 3 })).toBe('products')
+})
+
+test('Should render template conditional with comparator ">"', () => {
+  type Definition = { x: [{ w: number }] }
+  const t = createUktiTranslator<Definition>({
+    locale: 'en',
+    translations: { en: { x: '{{w > 1 ? "a" : "b"}}' } }
+  })
+  expect(t('x', { w: 1 })).toBe('b')
+  expect(t('x', { w: 2 })).toBe('a')
+})
+
+test('Should render template conditional with comparator ">="', () => {
+  type Definition = { x: [{ w: number }] }
+  const t = createUktiTranslator<Definition>({
+    locale: 'en',
+    translations: { en: { x: '{{w >= 1 ? "a" : "b"}}' } }
+  })
+  expect(t('x', { w: 0 })).toBe('b')
+  expect(t('x', { w: 1 })).toBe('a')
+  expect(t('x', { w: 2 })).toBe('a')
+})
+
+test('Should render template conditional with comparator "<"', () => {
+  type Definition = { x: [{ w: number }] }
+  const t = createUktiTranslator<Definition>({
+    locale: 'en',
+    translations: { en: { x: '{{w < 1 ? "a" : "b"}}' } }
+  })
+  expect(t('x', { w: 0 })).toBe('a')
+  expect(t('x', { w: 1 })).toBe('b')
+  expect(t('x', { w: 2 })).toBe('b')
+})
+
+test('Should render template conditional with comparator "<="', () => {
+  type Definition = { x: [{ w: number }] }
+  const t = createUktiTranslator<Definition>({
+    locale: 'en',
+    translations: { en: { x: '{{w <= 1 ? "a" : "b"}}' } }
+  })
+  expect(t('x', { w: 0 })).toBe('a')
+  expect(t('x', { w: 1 })).toBe('a')
+  expect(t('x', { w: 2 })).toBe('b')
+})
+
+test('Should render template with multiple variables', () => {
+  type Definition = {
+    list: [{ items: string, length: number, location: string }]
+  }
+  const t = createUktiTranslator<Definition>({
+    locale: 'en',
+    translations: {
+      en: {
+        list: 'The land vehicle{{length == 1 ? "" : "s"}} used {{length == 1 ? "is" : "are"}} {{items}} in the {{location}}.'
+      }
+    }
+  })
+  const items = new Intl
+    // @ts-expect-error browser api
+    .ListFormat('en', { style: 'long', type: 'conjunction' })
+    .format(['Motorcycle', 'Bus', 'Car'])
+
+  expect(t('list', { items, length: items.length, location: 'countryside' }))
+    .toBe('The land vehicles used are Motorcycle, Bus, and Car in the countryside.')
+})

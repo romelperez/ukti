@@ -1,3 +1,7 @@
+const testIsVariable = /^[a-zA-Z]\w*$/
+const testIsNumeric = /^-?\d+(.\d+)?$/
+const formatFragment = (value: string): string => value.trim().replace(/^["']/, '').replace(/["']$/, '')
+
 /**
  * Render a template string with optional variables if required.
  * All interpolations have to be wrapped in "{{" and "}}".
@@ -32,13 +36,50 @@ const renderTemplate = <Vars extends Record<string, unknown> = Record<string, un
       .replace(/}}$/, '')
       .trim()
 
+    // Is basic interpolation.
     if (variablesKeys.includes(result)) {
       result = String(variables[result])
     }
+    // Is a conditional.
     else if (/.+\?.+:.+/.test(result)) {
       const [condition, truthy, falsy] = result.split(/[?:]/)
-      result = variables[condition.trim()] ? truthy : falsy
-      result = result.trim().replace(/^["']/, '').replace(/["']$/, '')
+      let isValid = false
+
+      // Has comparator in format " statement comparator statement ".
+      if (/^[\s\S]+(===?|!==?|>=?|<=?)[\s\S]+$/.test(condition)) {
+        const [a, comparator, b] = condition.split(/(===?|!==?|>=?|<=?)/)
+
+        let x: number | string = formatFragment(a)
+        x = testIsVariable.test(x)
+          ? variables[x] as string
+          : testIsNumeric.test(x)
+            ? Number(x)
+            : x
+
+        let y: number | string = formatFragment(b)
+        y = testIsVariable.test(y)
+          ? variables[y] as string
+          : testIsNumeric.test(y)
+            ? Number(y)
+            : y
+
+        switch (comparator) {
+          case '==':
+          case '===': isValid = x === y; break
+          case '!=':
+          case '!==': isValid = x !== y; break
+          case '>': isValid = x > y; break
+          case '>=': isValid = x >= y; break
+          case '<': isValid = x < y; break
+          case '<=': isValid = x <= y; break
+        }
+      }
+      else {
+        isValid = !!variables[condition.trim()]
+      }
+
+      result = isValid ? truthy : falsy
+      result = formatFragment(result)
     }
     else {
       throw new Error(`Ukti template requires variable "${result}" to render.`)
