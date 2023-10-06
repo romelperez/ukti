@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 
+// TODO: Refactor to nested object structure using proxies:
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy.
+
 import type {
   UktiLocales,
   UktiDefinitionItemVariables,
@@ -8,7 +11,7 @@ import type {
   UktiTranslations
 } from './types'
 import { UKTI_LOCALE_DEFAULT } from './constants'
-import { renderTemplate } from './internal/renderTemplate'
+import { renderUktiTemplate } from './renderUktiTemplate'
 
 const createUktiTranslator = <
   Definition extends UktiDefinition,
@@ -18,7 +21,6 @@ const createUktiTranslator = <
     props: {
       translations: UktiTranslations<Definition, Locales, LocaleDefault>
       locale: Locales
-      throwIfError?: boolean
     } & (
       LocaleDefault extends typeof UKTI_LOCALE_DEFAULT ? {
         localeDefault?: LocaleDefault
@@ -27,7 +29,7 @@ const createUktiTranslator = <
       }
     )
   ) => {
-  const { translations, locale, localeDefault, throwIfError } = props
+  const { translations, locale, localeDefault } = props
 
   return <
     Dictionary extends {
@@ -66,20 +68,7 @@ const createUktiTranslator = <
     }
 
     if (variables) {
-      try {
-        return renderTemplate(template, variables)
-      }
-      catch (err) {
-        const error = err instanceof Error ? ` ${err.message}.` : ''
-        const message = `Ukti translation for the key "${path}" did not receive the expected variables.${error}`
-
-        if (throwIfError) {
-          throw new Error(message)
-        }
-        else {
-          console.error(message)
-        }
-      }
+      return renderUktiTemplate(template, variables)
     }
 
     return template

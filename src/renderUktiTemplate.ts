@@ -14,7 +14,7 @@ const formatFragment = (value: string): string => value.trim().replace(/^["']/, 
  * @param variables Optional variables.
  * @returns Interpolated template string with variables.
  */
-const renderTemplate = <Vars extends Record<string, unknown> = Record<string, unknown>>(
+const renderUktiTemplate = <Vars extends Record<string, unknown> = Record<string, unknown>>(
   template: string,
   variables: Vars
 ): string => {
@@ -89,4 +89,4 @@ const renderTemplate = <Vars extends Record<string, unknown> = Record<string, un
   }, template)
 }
 
-export { renderTemplate }
+export { renderUktiTemplate }
