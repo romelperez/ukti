@@ -141,20 +141,20 @@ e.g. displaying different words based on conditions.
 import { createUktiTranslator } from 'ukti'
 
 type Definition = {
-  stock: [{ qty: number, isUnit: boolean }]
+  stock: [{ qty: number }]
 }
 
 const t = createUktiTranslator<Definition>({
   locale: 'en',
   translations: {
     en: {
-      stock: 'There {{isUnit ? "is" : "are"}} {{qty}} product{{isUnit ? "" : "s"}} available'
+      stock: "There {{qty == 1 ? 'is' : 'are'}} {{qty}} product{{qty == 1 ? '' : 's'}} available"
     }
   }
 })
 
-console.log(t('stock', { qty: 1, isUnit: true })) // 'There is 1 product available'
-console.log(t('stock', { qty: 3, isUnit: false })) // 'There are 3 products available'
+console.log(t('stock', { qty: 1 })) // 'There is 1 product available'
+console.log(t('stock', { qty: 3 })) // 'There are 3 products available'
 ```
 
 The variables can be formatted using the native JavaScript [`Intl`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl)
@@ -164,14 +164,14 @@ object methods before providing them to the translator.
 import { createUktiTranslator } from 'ukti'
 
 type Definition = {
-  list: [{ items: string }]
+  list: [{ items: string, length: number, location: string }]
 }
 
 const t = createUktiTranslator<Definition>({
   locale: 'en',
   translations: {
     en: {
-      list: 'The land vehicles used are {{items}} in the countryside.'
+      list: 'The land vehicle{{length == 1 ? "" : "s"}} used {{length == 1 ? "is" : "are"}} {{items}} in the {{location}}.'
     }
   }
 })
@@ -180,9 +180,9 @@ const items = new Intl
   .ListFormat('en', { style: 'long', type: 'conjunction' })
   .format(['Motorcycle', 'Bus', 'Car'])
 
-console.log(t('list', { items }))
+console.log(t('list', { items, length: items.length, location: 'countryside' }))
 // 'The land vehicles used are Motorcycle, Bus, and Car in the countryside.'
 ```
 
-Ukti does not support comparison operators such as `===`, `>`, or `<=` in the
-template conditionals.
+Ukti supports the comparison operators `==`, `===`, `!=`, `!==`, `>`, `>=`, `<`, `<=`
+in the template conditionals.
