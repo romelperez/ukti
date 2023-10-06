@@ -4,12 +4,12 @@
   "publishConfig": {
     "access": "public"
   },
-  "description": "~0.7kB Type-safe l10n and i18n JavaScript utility.",
+  "description": "~1kB Type-safe i18n and l10n JavaScript utility.",
   "keywords": [
-    "l10n",
     "i18n",
-    "localization",
-    "internationalization"
+    "l10n",
+    "internationalization",
+    "localization"
   ],
   "homepage": "https://github.com/romelperez/ukti",
   "repository": {
