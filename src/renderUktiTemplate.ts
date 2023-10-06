@@ -1,22 +1,19 @@
-const testIsVariable = /^[a-zA-Z]\w*$/
-const testIsNumeric = /^-?\d+(.\d+)?$/
-const formatFragment = (value: string): string => value.trim().replace(/^["']/, '').replace(/["']$/, '')
-
 /**
  * Render a template string with optional variables if required.
  * All interpolations have to be wrapped in "{{" and "}}".
  * It suppots the following template interpolations:
- * - "{{variable}}" for raw strings, numbers and symbols.
- * - "{{variable ? "a" : "b"}}" for variable as booleanish.
- * - "{{variable ? 'a' : 'b'}}" for variable as booleanish.
- * - "{{variable ? 10 : 20}}" for variable as booleanish.
+ * - "{{value}}" for basic interpolation.
+ * - "{{value ? value : value}}" for interpolation with comparison.
+ * - "{{value comparator value ? value : value}}" for interpolation with comparison
+ * with comparator.
  * @param text Template text.
  * @param variables Optional variables.
  * @returns Interpolated template string with variables.
  */
 const renderUktiTemplate = <Vars extends Record<string, unknown> = Record<string, unknown>>(
   template: string,
-  variables: Vars
+  variables: Vars,
+  config?: { throwIfError?: boolean }
 ): string => {
   if (!variables || typeof variables !== 'object') {
     return template
@@ -28,7 +25,38 @@ const renderUktiTemplate = <Vars extends Record<string, unknown> = Record<string
     return template
   }
 
-  const variablesKeys = Object.keys(variables) as Array<keyof Vars>
+  const { throwIfError } = { ...config }
+
+  const showTemplateVariableError = (variableName: string): void => {
+    const error = `Ukti template requires defined variable "${variableName}" to render.`
+    if (throwIfError) {
+      throw new Error(error)
+    }
+    else {
+      console.error(error)
+    }
+  }
+
+  const getTemplateInterpolation = (data: string): number | string | undefined => {
+    const value = data.trim()
+
+    // Is variable.
+    if (/^[a-zA-Z]\w*$/.test(value)) {
+      if (variables[value] === undefined) {
+        showTemplateVariableError(value)
+      }
+      return variables[value] as string
+    }
+    // Is numeric.
+    else if (/^-?\d+(.\d+)?$/.test(value)) {
+      return Number(value)
+    }
+
+    // Is string.
+    return value.trim()
+      .replace(/^["']/, '')
+      .replace(/["']$/, '')
+  }
 
   return [...matches].reduce((text, item) => {
     let result = item
@@ -37,31 +65,29 @@ const renderUktiTemplate = <Vars extends Record<string, unknown> = Record<string
       .trim()
 
     // Is basic interpolation.
-    if (variablesKeys.includes(result)) {
-      result = String(variables[result])
+    if (Object.keys(variables).includes(result)) {
+      if (variables[result] === undefined) {
+        showTemplateVariableError(result)
+        return ''
+      }
+      result = variables[result] as string
     }
     // Is a conditional.
-    else if (/.+\?.+:.+/.test(result)) {
+    else if (/^.+\?.+:.+$/.test(result)) {
       const [condition, truthy, falsy] = result.split(/[?:]/)
       let isValid = false
 
-      // Has comparator in format " statement comparator statement ".
+      // Conditional has comparator in format " statement comparator statement ".
       if (/^[\s\S]+(===?|!==?|>=?|<=?)[\s\S]+$/.test(condition)) {
-        const [a, comparator, b] = condition.split(/(===?|!==?|>=?|<=?)/)
+        const fragments = condition.split(/(===?|!==?|>=?|<=?)/)
 
-        let x: number | string = formatFragment(a)
-        x = testIsVariable.test(x)
-          ? variables[x] as string
-          : testIsNumeric.test(x)
-            ? Number(x)
-            : x
+        const x = getTemplateInterpolation(fragments[0])
+        const comparator = fragments[1]
+        const y = getTemplateInterpolation(fragments[2])
 
-        let y: number | string = formatFragment(b)
-        y = testIsVariable.test(y)
-          ? variables[y] as string
-          : testIsNumeric.test(y)
-            ? Number(y)
-            : y
+        if (x === undefined || y === undefined) {
+          return ''
+        }
 
         switch (comparator) {
           case '==':
@@ -74,15 +100,26 @@ const renderUktiTemplate = <Vars extends Record<string, unknown> = Record<string
           case '<=': isValid = x <= y; break
         }
       }
+      // Conditional has truthy variable.
       else {
-        isValid = !!variables[condition.trim()]
+        const variable = getTemplateInterpolation(condition)
+        if (variable === undefined) {
+          return ''
+        }
+        isValid = !!variable
       }
 
-      result = isValid ? truthy : falsy
-      result = formatFragment(result)
+      const value = getTemplateInterpolation(isValid ? truthy : falsy)
+
+      if (value === undefined) {
+        return ''
+      }
+
+      result = value as string
     }
     else {
-      throw new Error(`Ukti template requires variable "${result}" to render.`)
+      showTemplateVariableError(result)
+      return ''
     }
 
     return text.replace(item, result)

@@ -1,5 +1,9 @@
-import { test, expect } from 'vitest'
+import { test, expect, vi, afterEach } from 'vitest'
 import { createUktiTranslator } from '../'
+
+afterEach(() => {
+  vi.restoreAllMocks()
+})
 
 test('Should render template variable', () => {
   type Definition = {
@@ -9,7 +13,7 @@ test('Should render template variable', () => {
     locale: 'en',
     translations: {
       en: {
-        x: '{{v}} a {{v}} b {{v}} c {{v}}'
+        x: '{{v}} a {{ v}} b {{v }} c {{ v }}'
       }
     }
   })
@@ -80,7 +84,7 @@ test('Should render template conditional with empty strings', () => {
   expect(t('stock', { qty: 3, isUnit: false })).toBe('There are 3 products available')
 })
 
-test('Should render template conditional with comparator "=="', () => {
+test('Should render template conditional with "==" comparator', () => {
   type Definition = { x: [{ w: number }] }
   const t = createUktiTranslator<Definition>({
     locale: 'en',
@@ -90,7 +94,7 @@ test('Should render template conditional with comparator "=="', () => {
   expect(t('x', { w: 3 })).toBe('products')
 })
 
-test('Should render template conditional with comparator "==="', () => {
+test('Should render template conditional with "===" comparator', () => {
   type Definition = { x: [{ w: number }] }
   const t = createUktiTranslator<Definition>({
     locale: 'en',
@@ -100,7 +104,7 @@ test('Should render template conditional with comparator "==="', () => {
   expect(t('x', { w: 3 })).toBe('products')
 })
 
-test('Should render template conditional with comparator "!="', () => {
+test('Should render template conditional with "!=" comparator', () => {
   type Definition = { x: [{ w: number }] }
   const t = createUktiTranslator<Definition>({
     locale: 'en',
@@ -110,7 +114,7 @@ test('Should render template conditional with comparator "!="', () => {
   expect(t('x', { w: 3 })).toBe('products')
 })
 
-test('Should render template conditional with comparator "!=="', () => {
+test('Should render template conditional with "!==" comparator', () => {
   type Definition = { x: [{ w: number }] }
   const t = createUktiTranslator<Definition>({
     locale: 'en',
@@ -120,7 +124,7 @@ test('Should render template conditional with comparator "!=="', () => {
   expect(t('x', { w: 3 })).toBe('products')
 })
 
-test('Should render template conditional with comparator ">"', () => {
+test('Should render template conditional with ">" comparator', () => {
   type Definition = { x: [{ w: number }] }
   const t = createUktiTranslator<Definition>({
     locale: 'en',
@@ -130,7 +134,7 @@ test('Should render template conditional with comparator ">"', () => {
   expect(t('x', { w: 2 })).toBe('a')
 })
 
-test('Should render template conditional with comparator ">="', () => {
+test('Should render template conditional with ">=" comparator', () => {
   type Definition = { x: [{ w: number }] }
   const t = createUktiTranslator<Definition>({
     locale: 'en',
@@ -141,7 +145,7 @@ test('Should render template conditional with comparator ">="', () => {
   expect(t('x', { w: 2 })).toBe('a')
 })
 
-test('Should render template conditional with comparator "<"', () => {
+test('Should render template conditional with "<" comparator', () => {
   type Definition = { x: [{ w: number }] }
   const t = createUktiTranslator<Definition>({
     locale: 'en',
@@ -152,7 +156,7 @@ test('Should render template conditional with comparator "<"', () => {
   expect(t('x', { w: 2 })).toBe('b')
 })
 
-test('Should render template conditional with comparator "<="', () => {
+test('Should render template conditional with "<=" comparator', () => {
   type Definition = { x: [{ w: number }] }
   const t = createUktiTranslator<Definition>({
     locale: 'en',
@@ -182,4 +186,96 @@ test('Should render template with multiple variables', () => {
 
   expect(t('list', { items, length: items.length, location: 'countryside' }))
     .toBe('The land vehicles used are Motorcycle, Bus, and Car in the countryside.')
+})
+
+test('Should console error if required variable is not defined', () => {
+  const consoleError = vi.spyOn(console, 'error')
+  type Definition = {
+    example: [{ a: number, b: number, c: number, d: number }]
+  }
+  const t = createUktiTranslator<Definition>({
+    locale: 'en',
+    translations: {
+      en: {
+        example: '{{a}}'
+      }
+    }
+  })
+  expect(t('example', {} as any)).toBe('')
+  expect(consoleError).toHaveBeenCalledTimes(1)
+  expect(consoleError).toHaveBeenCalledWith('Ukti template requires defined variable "a" to render.')
+  expect(t('example', { a: undefined } as any)).toBe('')
+  expect(consoleError).toHaveBeenCalledTimes(2)
+  expect(consoleError).toHaveBeenCalledWith('Ukti template requires defined variable "a" to render.')
+})
+
+test('Should console error if required variable in conditional is not defined', () => {
+  const consoleError = vi.spyOn(console, 'error')
+  type Definition = {
+    example: [{ a: number, b: number, c: number, d: number }]
+  }
+  const t = createUktiTranslator<Definition>({
+    locale: 'en',
+    translations: {
+      en: {
+        example: '{{a ? b : c}}'
+      }
+    }
+  })
+  expect(t('example', { b: 2, c: 3 } as any)).toBe('')
+  expect(consoleError).toHaveBeenCalledTimes(1)
+  expect(consoleError).toHaveBeenCalledWith('Ukti template requires defined variable "a" to render.')
+  expect(t('example', { a: true, c: 3 } as any)).toBe('')
+  expect(consoleError).toHaveBeenCalledTimes(2)
+  expect(consoleError).toHaveBeenCalledWith('Ukti template requires defined variable "b" to render.')
+  expect(t('example', { a: false, b: 3 } as any)).toBe('')
+  expect(consoleError).toHaveBeenCalledTimes(3)
+  expect(consoleError).toHaveBeenCalledWith('Ukti template requires defined variable "c" to render.')
+  expect(t('example', { a: true, b: 3, c: 4 } as any)).toBe('3')
+  expect(consoleError).toHaveBeenCalledTimes(3)
+})
+
+test('Should console error if required variable in conditional with comparator is not defined', () => {
+  const consoleError = vi.spyOn(console, 'error')
+  type Definition = {
+    example: [{ a: number, b: number, c: number, d: number }]
+  }
+  const t = createUktiTranslator<Definition>({
+    locale: 'en',
+    translations: {
+      en: {
+        example: '{{a > b ? c : d}}'
+      }
+    }
+  })
+  expect(t('example', { b: 0, c: 3, d: 4 } as any)).toBe('')
+  expect(consoleError).toHaveBeenCalledTimes(1)
+  expect(consoleError).toHaveBeenCalledWith('Ukti template requires defined variable "a" to render.')
+  expect(t('example', { a: 0, c: 3, d: 4 } as any)).toBe('')
+  expect(consoleError).toHaveBeenCalledTimes(2)
+  expect(consoleError).toHaveBeenCalledWith('Ukti template requires defined variable "b" to render.')
+  expect(t('example', { a: 1, b: 0, d: 4 } as any)).toBe('')
+  expect(consoleError).toHaveBeenCalledTimes(3)
+  expect(consoleError).toHaveBeenCalledWith('Ukti template requires defined variable "c" to render.')
+  expect(t('example', { a: 1, b: 2, c: 3 } as any)).toBe('')
+  expect(consoleError).toHaveBeenCalledTimes(4)
+  expect(consoleError).toHaveBeenCalledWith('Ukti template requires defined variable "d" to render.')
+  expect(t('example', { a: 1, b: 2, c: 3, d: 4 } as any)).toBe('4')
+  expect(consoleError).toHaveBeenCalledTimes(4)
+})
+
+test('Should throw error if required variable is not defined and "throwIfError" enabled', () => {
+  type Definition = {
+    products: [{ qty: number }]
+  }
+  const t = createUktiTranslator<Definition>({
+    locale: 'en',
+    throwIfError: true,
+    translations: {
+      en: {
+        products: '{{qty}} products'
+      }
+    }
+  })
+  expect(() => t('products', {} as any)).toThrowError('Ukti template requires defined variable "qty" to render.')
 })

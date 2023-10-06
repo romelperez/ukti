@@ -20,6 +20,7 @@ const createUktiTranslator = <
 >(
     props: {
       translations: UktiTranslations<Definition, Locales, LocaleDefault>
+      throwIfError?: boolean
       locale: Locales
     } & (
       LocaleDefault extends typeof UKTI_LOCALE_DEFAULT ? {
@@ -29,7 +30,7 @@ const createUktiTranslator = <
       }
     )
   ) => {
-  const { translations, locale, localeDefault } = props
+  const { translations, throwIfError, locale, localeDefault } = props
 
   return <
     Dictionary extends {
@@ -68,7 +69,7 @@ const createUktiTranslator = <
     }
 
     if (variables) {
-      return renderUktiTemplate(template, variables)
+      return renderUktiTemplate(template, variables, { throwIfError })
     }
 
     return template
