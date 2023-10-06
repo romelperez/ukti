@@ -12,7 +12,7 @@
  */
 const renderUktiTemplate = <Vars extends Record<string, unknown> = Record<string, unknown>>(
   template: string,
-  variables: Vars,
+  variables?: Vars,
   config?: { throwIfError?: boolean }
 ): string => {
   if (!variables || typeof variables !== 'object') {

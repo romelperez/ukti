@@ -1,14 +1,8 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-
-// TODO: Refactor to nested object structure using proxies:
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy.
-
 import type {
   UktiLocales,
-  UktiDefinitionItemVariables,
-  UktiDefinitionItem,
   UktiDefinition,
-  UktiTranslations
+  UktiTranslations,
+  UktiTranslator
 } from './types'
 import { UKTI_LOCALE_DEFAULT } from './constants'
 import { renderUktiTemplate } from './renderUktiTemplate'
@@ -29,51 +23,45 @@ const createUktiTranslator = <
         localeDefault: LocaleDefault
       }
     )
-  ) => {
+  ): UktiTranslator<Definition> => {
   const { translations, throwIfError, locale, localeDefault } = props
 
-  return <
-    Dictionary extends {
-      [A in keyof Definition]: Definition[A] extends Record<string, unknown>
-        ? {
-            [B in keyof Definition[A]]: [`${string & A}.${string & B}`, Definition[A][B]]
-          }[keyof Definition[A]]
-        : [`${string & A}`, Definition[A]]
-    }[keyof Definition],
-    Path extends Dictionary extends [infer A, UktiDefinitionItem] ? A : never,
-    Item extends Dictionary extends [Path, infer B] ? B : never,
-    Params extends Item extends UktiDefinitionItemVariables ? Item : [undefined?]
-  >(
-    path: Path,
-    ...params: Params
-  ): string => {
-    const definition = translations[locale] ?? translations[(localeDefault ?? UKTI_LOCALE_DEFAULT) as LocaleDefault]
+  const definitionDefault = translations[(localeDefault ?? UKTI_LOCALE_DEFAULT) as LocaleDefault]
+  const definition = translations[locale] ?? definitionDefault
 
-    if (!definition) {
-      return ''
+  const getTranslation = (template: string, variables?: Record<string, unknown>): string =>
+    renderUktiTemplate(template, variables, { throwIfError })
+
+  const proxy = new Proxy({}, {
+    get (target, property1) {
+      const structure1 = definitionDefault[property1 as keyof Definition]
+      const level1 = definition[property1 as keyof Definition]
+
+      if (structure1 !== null && typeof structure1 === 'object') {
+        return new Proxy({}, {
+          get (target, property2) {
+            const level2 = (level1 as Record<string, unknown>)[property2 as string]
+
+            return (variables?: Record<string, unknown>) => {
+              if (!level2) {
+                return ''
+              }
+              return getTranslation(level2 as string, variables)
+            }
+          }
+        })
+      }
+
+      return (variables?: Record<string, unknown>) => {
+        if (!level1) {
+          return ''
+        }
+        return getTranslation(level1 as string, variables)
+      }
     }
+  }) as UktiTranslator<Definition>
 
-    const fragments = path.split('.')
-    const [parent, child] = fragments
-    const [variables] = params as [Record<string, unknown>]
-
-    const template =
-      fragments.length === 1 // Parent provided.
-        ? definition[parent]
-        : fragments.length === 2 // Parent.Child provided.
-          ? (definition[parent] as any)?.[child]
-          : null // Unknown number of fragments provided.
-
-    if (!template) {
-      return ''
-    }
-
-    if (variables) {
-      return renderUktiTemplate(template, variables, { throwIfError })
-    }
-
-    return template
-  }
+  return proxy
 }
 
 export { createUktiTranslator }

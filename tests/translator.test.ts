@@ -15,8 +15,8 @@ test('Should get basic translation of defined locale', () => {
       }
     }
   })
-  expect(t('x')).toBe('x')
-  expect(t('y')).toBe('y')
+  expect(t.x()).toBe('x')
+  expect(t.y()).toBe('y')
 })
 
 test('Should get basic translation and interpolate variables of defined locale', () => {
@@ -33,7 +33,7 @@ test('Should get basic translation and interpolate variables of defined locale',
       }
     }
   })
-  expect(t('y', { a: 1, b: '2' })).toBe('y')
+  expect(t.y({ a: 1, b: '2' })).toBe('y')
 })
 
 test('Should get nested translation of defined locale', () => {
@@ -54,8 +54,8 @@ test('Should get nested translation of defined locale', () => {
       }
     }
   })
-  expect(t('x.h')).toBe('x.h')
-  expect(t('x.i')).toBe('x.i')
+  expect(t.x.h()).toBe('x.h')
+  expect(t.x.i()).toBe('x.i')
 })
 
 test('Should interpolate defined variables for a specific nested translation', () => {
@@ -76,8 +76,8 @@ test('Should interpolate defined variables for a specific nested translation', (
       }
     }
   })
-  expect(t('x.a')).toBe('Random text')
-  expect(t('x.b', { name: 'Ukti', age: 21 })).toBe('My name is Ukti and I am 21 years old')
+  expect(t.x.a()).toBe('Random text')
+  expect(t.x.b({ name: 'Ukti', age: 21 })).toBe('My name is Ukti and I am 21 years old')
 })
 
 test('Should get default locale translation if no provided locale translation is available', () => {
@@ -96,7 +96,7 @@ test('Should get default locale translation if no provided locale translation is
       }
     }
   })
-  expect(t('x.a')).toBe('x.a')
+  expect(t.x.a()).toBe('x.a')
 })
 
 test('Should process nested translations', () => {
@@ -121,10 +121,10 @@ test('Should process nested translations', () => {
       }
     }
   })
-  expect(t('a')).toBe('a')
-  expect(t('b', { age: 21 })).toBe('21 yo')
-  expect(t('x.p')).toBe('x.p')
-  expect(t('x.q', { name: 'Romel' })).toBe('hello Romel')
+  expect(t.a()).toBe('a')
+  expect(t.b({ age: 21 })).toBe('21 yo')
+  expect(t.x.p()).toBe('x.p')
+  expect(t.x.q({ name: 'Romel' })).toBe('hello Romel')
 })
 
 test('Should accept custom locales and default locale', () => {
@@ -148,8 +148,8 @@ test('Should accept custom locales and default locale', () => {
       }
     }
   })
-  expect(t('a')).toBe('a')
-  expect(t('x.p')).toBe('x.p')
+  expect(t.a()).toBe('a')
+  expect(t.x.p()).toBe('x.p')
 })
 
 test('Should get default locale translation if no provided locale translation is available with custom locales', () => {
@@ -176,5 +176,5 @@ test('Should get default locale translation if no provided locale translation is
       }
     }
   })
-  expect(t('x.a')).toBe('hi.x.a')
+  expect(t.x.a()).toBe('hi.x.a')
 })

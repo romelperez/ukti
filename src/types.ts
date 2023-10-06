@@ -203,3 +203,11 @@ type UktiLocaleDefault = 'en'
 
 export type UktiTranslations<Definition extends UktiDefinition, Locales extends UktiLocales = UktiLocales, LocaleDefault extends UktiLocales = UktiLocaleDefault>
   = Partial<Record<Locales, UktiTranslationValues<Definition>>> & Record<LocaleDefault, UktiTranslationValues<Definition>>
+
+export type UktiTranslator<Definition extends UktiDefinition> = {
+  [P in keyof Definition]: Definition[P] extends Record<string, unknown>
+    ? {
+        [Q in keyof Definition[P]]: (...parameters: Definition[P][Q] extends UktiDefinitionItemVariables ? Definition[P][Q] : []) => string
+      }
+    : (...parameters: Definition[P] extends UktiDefinitionItemVariables ? Definition[P] : []) => string
+}

@@ -16,17 +16,17 @@ test('Should type-safe first level translation definitions', () => {
     }
   })
   // @ts-expect-error test
-  t('x', {})
+  t.x({})
   // @ts-expect-error test
-  t('x', { a: 1, b: '2' })
+  t.x({ a: 1, b: '2' })
   // @ts-expect-error test
-  t('y')
+  t.y()
   // @ts-expect-error test
-  t('y', { b: 2 })
+  t.y({ b: 2 })
   // @ts-expect-error test
-  t('s')
+  t.s()
   // @ts-expect-error test
-  t('s', {})
+  t.s({})
 })
 
 test('Should type-safe second level translation definitions', () => {
@@ -50,21 +50,21 @@ test('Should type-safe second level translation definitions', () => {
     }
   })
   // @ts-expect-error test
-  t('p.x', {})
+  t.p.x({})
   // @ts-expect-error test
-  t('p.x', { a: 1, b: '2' })
+  t.p.x({ a: 1, b: '2' })
   // @ts-expect-error test
-  t('p.y')
+  t.p.y()
   // @ts-expect-error test
-  t('p.y', { b: 2 })
+  t.p.y({ b: 2 })
   // @ts-expect-error test
-  t('s')
+  t.s()
   // @ts-expect-error test
-  t('s', {})
+  t.s({})
   // @ts-expect-error test
-  t('p.s')
+  t.p.s()
   // @ts-expect-error test
-  t('p.s', {})
+  t.p.s({})
 })
 
 test('Should accept custom locales and default locale', () => {
