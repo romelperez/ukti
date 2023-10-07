@@ -186,3 +186,6 @@ console.log(t('list', { items, length: items.length, location: 'countryside' }))
 
 Ukti supports the comparison operators `==`, `===`, `!=`, `!==`, `>`, `>=`, `<`, `<=`
 in the template conditionals.
+
+If the template requires variables but they are not provided when calling the translation,
+an empty string is returned to prevent incorrect translations.
