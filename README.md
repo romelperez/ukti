@@ -72,9 +72,9 @@ const t = createUktiTranslator<Definition>({
   }
 })
 
-console.log(t('title')) // 'Language'
-console.log(t('form.label')) // 'Type your language'
-console.log(t('form.error', { name: 'Spanglish' })) // 'The language Spanglish is invalid.'
+console.log(t.title()) // 'Language'
+console.log(t.form.label()) // 'Type your language'
+console.log(t.form.error({ name: 'Spanglish' })) // 'The language Spanglish is invalid.'
 ```
 
 If the used locale is not defined in the translations, the default locale is used.
@@ -121,9 +121,9 @@ const t = createUktiTranslator<Definition, Locales, LocaleDefault>({
   }
 })
 
-console.log(t('title')) // 'Idioma'
-console.log(t('form.label')) // 'Escribe tu idioma'
-console.log(t('form.error', { name: 'Spanglish' })) // 'El idioma Spanglish no está soportado.'
+console.log(t.title()) // 'Idioma'
+console.log(t.form.label()) // 'Escribe tu idioma'
+console.log(t.form.error({ name: 'Spanglish' })) // 'El idioma Spanglish no está soportado.'
 ```
 
 If the specified locale to be used is not defined (`'hi'`) then the default
@@ -132,9 +132,13 @@ locale (`'es'`) is used.
 Locales translations are optional (except the default one) but the all definition
 properties have to be specified.
 
+If there is an incomplete locale translation defined (such as partially defined),
+an empty string is returned when trying to translate it. This is to prevent
+inconsistent translations with some parts in one language and others in another one.
+
 ## Templates
 
-Translations texts are templates supporting variables with optional conditionals.
+Translations texts are templates supporting variables interpolations.
 e.g. displaying different words based on conditions.
 
 ```ts
@@ -153,8 +157,8 @@ const t = createUktiTranslator<Definition>({
   }
 })
 
-console.log(t('stock', { qty: 1 })) // 'There is 1 product available'
-console.log(t('stock', { qty: 3 })) // 'There are 3 products available'
+console.log(t.stock({ qty: 1 })) // 'There is 1 product available'
+console.log(t.stock({ qty: 3 })) // 'There are 3 products available'
 ```
 
 The variables can be formatted using the native JavaScript [`Intl`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl)
@@ -178,14 +182,18 @@ const t = createUktiTranslator<Definition>({
 
 const items = new Intl
   .ListFormat('en', { style: 'long', type: 'conjunction' })
-  .format(['Motorcycle', 'Bus', 'Car'])
+  .format(['motorcycle', 'bus', 'car'])
 
-console.log(t('list', { items, length: items.length, location: 'countryside' }))
-// 'The land vehicles used are Motorcycle, Bus, and Car in the countryside.'
+console.log(t.list({ items, length: items.length, location: 'countryside' }))
+// 'The land vehicles used are motorcycle, bus, and car in the countryside.'
+
+console.log(t.list({ items: 'car', length: 1, location: 'city' }))
+// 'The land vehicle used is car in the city.'
 ```
 
 Ukti supports the comparison operators `==`, `===`, `!=`, `!==`, `>`, `>=`, `<`, `<=`
 in the template conditionals.
 
-If the template requires variables but they are not provided when calling the translation,
-an empty string is returned to prevent incorrect translations.
+If the template requires variables but they are not provided or `undefined` when
+calling the translation, an empty string is returned to prevent incorrect translations.
+An error message is logged in the console too.
