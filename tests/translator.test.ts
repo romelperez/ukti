@@ -163,3 +163,29 @@ test('Should get empty string if provided locale translation is available with i
   })
   expect(t.x.a()).toBe('')
 })
+
+test('Should return empty string if trying to translate and undefined item', () => {
+  type Definition = {
+    x: undefined
+    y: {
+      z: undefined
+    }
+  }
+  const t = createUktiTranslator<Definition>({
+    locale: 'en',
+    translations: {
+      en: {
+        x: 'x',
+        y: {
+          z: 'y.z'
+        }
+      }
+    }
+  })
+  expect(t.x()).toBe('x')
+  expect(t.y.z()).toBe('y.z')
+  // @ts-expect-error test
+  expect(t.z()).toBe('')
+  // @ts-expect-error test
+  expect(t.y.a()).toBe('')
+})
