@@ -29,12 +29,12 @@ test('Should get basic translation and interpolate variables of defined locale',
     translations: {
       en: {
         x: 'x',
-        y: 'y'
+        y: 'a={{a}} b={{b}}'
       }
     }
   })
   expect(t.x()).toBe('x')
-  expect(t.y({ a: 1, b: '2' })).toBe('y')
+  expect(t.y({ a: 1, b: '2' })).toBe('a=1 b=2')
 })
 
 test('Should interpolate defined variables for a specific nested translation', () => {
