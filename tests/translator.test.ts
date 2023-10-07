@@ -136,7 +136,7 @@ test('Should get default locale translation if no provided locale translation is
   expect(t.x.a()).toBe('hi.x.a')
 })
 
-test('Should get default locale translation if no provided locale translation is available with incomplete nesting', () => {
+test('Should get empty string if provided locale translation is available with incomplete nesting', () => {
   type Definition = {
     x: {
       a: undefined
@@ -161,5 +161,5 @@ test('Should get default locale translation if no provided locale translation is
       zh: {} as any // Used incomplete translation.
     }
   })
-  expect(t.x.a()).toBe('hi.x.a')
+  expect(t.x.a()).toBe('')
 })

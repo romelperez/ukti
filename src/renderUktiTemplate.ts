@@ -122,6 +122,7 @@ const renderUktiTemplate = <Vars extends Record<string, unknown> = Record<string
 
       result = value as string
     }
+    // Unknown interpolation.
     else {
       showVariableError(result, config)
       return ''
