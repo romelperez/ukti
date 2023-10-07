@@ -1,9 +1,4 @@
-import type {
-  UktiLocales,
-  UktiDefinition,
-  UktiTranslations,
-  UktiTranslator
-} from './types'
+import type { UktiLocales, UktiDefinition, UktiTranslations, UktiTranslator } from './types'
 import { UKTI_LOCALE_DEFAULT } from './constants'
 import { renderUktiTemplate } from './renderUktiTemplate'
 
@@ -40,7 +35,7 @@ const createUktiTranslator = <
       if (structure1 !== null && typeof structure1 === 'object') {
         return new Proxy({}, {
           get (target, property2) {
-            const level2 = (level1 as Record<string, unknown>)[property2 as string]
+            const level2 = (level1 as Record<string, unknown> || structure1)[property2 as string]
 
             return (variables?: Record<string, unknown>) => {
               if (!level2) {
