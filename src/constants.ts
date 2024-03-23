@@ -1,1 +1,1 @@
-export const UKTI_LOCALE_DEFAULT = 'en' as const
+export const UKTI_LANGUAGE_DEFAULT = 'en' as const

@@ -1,62 +1,99 @@
-import type { UktiLocales, UktiDefinition, UktiTranslations, UktiTranslator } from './types'
-import { UKTI_LOCALE_DEFAULT } from './constants'
+import type {
+  UktiLanguages,
+  UktiRegions,
+  UktiDefinition,
+  UktiTranslations,
+  UktiTranslator,
+  UktiTranslate
+} from './types'
+import { UKTI_LANGUAGE_DEFAULT } from './constants'
 import { renderUktiTemplate } from './renderUktiTemplate'
 
 const createUktiTranslator = <
   Definition extends UktiDefinition,
-  Locales extends UktiLocales = UktiLocales,
-  LocaleDefault extends UktiLocales = typeof UKTI_LOCALE_DEFAULT
+  Languages extends UktiLanguages = UktiLanguages,
+  LanguageDefault extends UktiLanguages = typeof UKTI_LANGUAGE_DEFAULT,
+  Regions extends string = UktiRegions
 >(
     props: {
-      translations: UktiTranslations<Definition, Locales, LocaleDefault>
+      translations: UktiTranslations<Definition, Languages, LanguageDefault, Regions>
       throwIfError?: boolean
-      locale: Locales
     } & (
-      LocaleDefault extends typeof UKTI_LOCALE_DEFAULT ? {
-        localeDefault?: LocaleDefault
+      LanguageDefault extends typeof UKTI_LANGUAGE_DEFAULT ? {
+        languageDefault?: LanguageDefault
       } : {
-        localeDefault: LocaleDefault
+        languageDefault: LanguageDefault
       }
     )
-  ): UktiTranslator<Definition> => {
-  const { translations, throwIfError, locale, localeDefault } = props
+  ): UktiTranslator<Definition, Languages, Regions> => {
+  const { translations, throwIfError, languageDefault } = props
 
-  const definitionDefault = translations[(localeDefault ?? UKTI_LOCALE_DEFAULT) as LocaleDefault]
-  const definition = translations[locale] ?? definitionDefault
+  const definitionDefault = translations[(languageDefault ?? UKTI_LANGUAGE_DEFAULT) as LanguageDefault]
+
+  if (definitionDefault === null || typeof definitionDefault !== 'object') {
+    throw new Error('Ukti requires the translations to have at least the default language.')
+  }
 
   const getTranslation = (template: string, variables?: Record<string, unknown>): string =>
     renderUktiTemplate(template, variables, { throwIfError })
 
-  const proxy = new Proxy({}, {
-    get (target, property1) {
-      const structure1 = definitionDefault[property1 as keyof Definition]
-      const level1 = definition[property1 as keyof Definition]
+  return (language: Languages, region?: Regions): UktiTranslate<Definition> => {
+    const definition = translations[language] ?? definitionDefault
 
-      if (structure1 !== null && typeof structure1 === 'object') {
-        return new Proxy({}, {
-          get (target, property2) {
-            const level2 = (level1 as Record<string, unknown>)?.[property2 as string]
-
-            return (variables?: Record<string, unknown>): string => {
-              if (!level2) {
-                return ''
-              }
-              return getTranslation(level2 as string, variables)
-            }
-          }
-        })
-      }
-
-      return (variables?: Record<string, unknown>): string => {
-        if (!level1) {
-          return ''
+    const proxy = new Proxy({}, {
+      get (target, property1: string) {
+        if (property1 === 'regions') {
+          console.error('Ukti translations have the word "regions" reserved.')
+          return () => ''
         }
-        return getTranslation(level1 as string, variables)
-      }
-    }
-  }) as UktiTranslator<Definition>
 
-  return proxy
+        const structure1 = definitionDefault[property1 as keyof Definition]
+        const level1 = definition[property1 as keyof Definition]
+
+        if (structure1 !== null && typeof structure1 === 'object') {
+          return new Proxy({}, {
+            get (target, property2: string) {
+              const level2 = (level1 as Record<string, unknown>)?.[property2]
+
+              return (variables?: Record<string, unknown>): string => {
+                if (!level2) {
+                  return ''
+                }
+
+                const regionText = region
+                  ? (definition.regions?.[region]?.[property1] as Record<string, string>)?.[property2]
+                  : false
+
+                if (regionText) {
+                  return getTranslation(regionText, variables)
+                }
+
+                return getTranslation(level2 as string, variables)
+              }
+            }
+          })
+        }
+
+        return (variables?: Record<string, unknown>): string => {
+          if (!level1) {
+            return ''
+          }
+
+          const regionText = region
+            ? definition.regions?.[region]?.[property1] as string
+            : false
+
+          if (regionText) {
+            return getTranslation(regionText, variables)
+          }
+
+          return getTranslation(level1 as string, variables)
+        }
+      }
+    }) as UktiTranslate<Definition>
+
+    return proxy
+  }
 }
 
 export { createUktiTranslator }
