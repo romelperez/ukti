@@ -147,10 +147,10 @@ const translator = createUktiTranslator<Definition>({
     en: {
       friend: 'Friend',
       regions: {
-        US: {
+        US: { // United States
           friend: 'Dude'
         },
-        CA: {
+        CA: { // Canada
           friend: 'Buddy'
         }
       }
@@ -158,10 +158,10 @@ const translator = createUktiTranslator<Definition>({
     es: {
       friend: 'Amigo',
       regions: {
-        CO: {
+        CO: { // Colombia
           friend: 'Parce'
         },
-        VN: {
+        VN: { // Venezuela
           friend: 'Pana'
         }
       }
@@ -169,7 +169,7 @@ const translator = createUktiTranslator<Definition>({
   }
 })
 
-const t = translator('es', 'CO')
+const t = translator('es', 'CO') // Spanish from Colombia
 
 console.log(t.friend()) // 'Parce'
 ```
