@@ -6,8 +6,7 @@ test('Should type-safe first level translation definitions', () => {
     x: undefined
     y: [{ a: number, b: string }]
   }
-  const t = createUktiTranslator<Definition>({
-    locale: 'en',
+  const translator = createUktiTranslator<Definition>({
     translations: {
       en: {
         x: 'x',
@@ -15,6 +14,7 @@ test('Should type-safe first level translation definitions', () => {
       }
     }
   })
+  const t = translator('en')
   // @ts-expect-error test
   t.x({})
   // @ts-expect-error test
@@ -37,8 +37,7 @@ test('Should type-safe second level translation definitions', () => {
       y: [{ a: number, b: string }]
     }
   }
-  const t = createUktiTranslator<Definition>({
-    locale: 'en',
+  const translator = createUktiTranslator<Definition>({
     translations: {
       en: {
         w: 'w',
@@ -49,6 +48,7 @@ test('Should type-safe second level translation definitions', () => {
       }
     }
   })
+  const t = translator('en')
   // @ts-expect-error test
   t.p.x({})
   // @ts-expect-error test
@@ -67,27 +67,110 @@ test('Should type-safe second level translation definitions', () => {
   t.p.s({})
 })
 
-test('Should accept custom locales and default locale', () => {
+test('Should accept custom languages and default language', () => {
   type Definition = {
     a: undefined
   }
-  type Locales = 'fr' | 'hi' | 'zh'
-  type LocaleDefault = 'hi'
-  createUktiTranslator<Definition, Locales, LocaleDefault>({
-    // @ts-expect-error test
-    locale: 'es',
+  type Languages = 'fr' | 'hi' | 'zh'
+  type LanguageDefault = 'hi'
+  const translator1 = createUktiTranslator<Definition, Languages, LanguageDefault>({
+    languageDefault: 'hi',
     translations: { hi: { a: 'a' } }
   })
-  createUktiTranslator<Definition, Locales, LocaleDefault>({
-    locale: 'hi',
+  // @ts-expect-error test
+  translator1('es')
+  createUktiTranslator<Definition, Languages, LanguageDefault>({
     // @ts-expect-error test
-    localeDefault: 'xx',
+    languageDefault: 'xx',
     translations: { hi: { a: 'a' } }
   })
-  createUktiTranslator<Definition, Locales, LocaleDefault>({
-    locale: 'fr',
-    localeDefault: 'hi',
-    // @ts-expect-error test
-    translations: { es: { a: 'a' } }
+
+  createUktiTranslator<Definition, Languages, LanguageDefault>({
+    languageDefault: 'hi',
+    translations: {
+      // @ts-expect-error test
+      es: {
+        a: 'a'
+      }
+    }
+  })
+})
+
+test('Should type-safe regions', () => {
+  type Definition = {
+    a: undefined
+  }
+  type Languages = 'fr' | 'hi' | 'zh'
+  type LanguageDefault = 'hi'
+  createUktiTranslator<Definition, Languages, LanguageDefault>({
+    languageDefault: 'hi',
+    translations: {
+      hi: {
+        a: 'a',
+        regions: {
+          CO: {
+            a: 'b'
+          },
+          // @ts-expect-error test
+          X: {
+            a: 'y'
+          }
+        }
+      }
+    }
+  })
+  createUktiTranslator<Definition, Languages, LanguageDefault>({
+    languageDefault: 'hi',
+    translations: {
+      hi: {
+        a: 'a',
+        regions: {
+          CO: {
+            // @ts-expect-error test
+            b: 'b'
+          }
+        }
+      }
+    }
+  })
+})
+
+test('Should type-safe custom regions', () => {
+  type Definition = {
+    a: undefined
+  }
+  type Languages = 'fr' | 'hi' | 'zh'
+  type LanguageDefault = 'hi'
+  type Regions = 'X' | 'Y'
+  createUktiTranslator<Definition, Languages, LanguageDefault, Regions>({
+    languageDefault: 'hi',
+    translations: {
+      hi: {
+        a: 'a',
+        regions: {
+          X: {
+            a: 'b'
+          },
+          // @ts-expect-error test
+          Z: {
+            a: 'c'
+          }
+        }
+      }
+    }
+  })
+  createUktiTranslator<Definition, Languages, LanguageDefault, Regions>({
+    languageDefault: 'hi',
+    translations: {
+      hi: {
+        a: 'a',
+        regions: {
+          Y: {
+            // @ts-expect-error test
+            b: 'b'
+          }
+        }
+      }
+    }
   })
 })
