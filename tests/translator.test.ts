@@ -59,6 +59,27 @@ test('Should throw error if default language translation is not defined', () => 
   }).toThrowError('Ukti requires the translations to have at least the default language.')
 })
 
+test('Should get translation of custom defined language', () => {
+  type Definition = {
+    x: undefined
+    y: undefined
+  }
+  type Languages = 'a' | 'b'
+  type LanguageDefault = 'a'
+  const translator = createUktiTranslator<Definition, Languages, LanguageDefault>({
+    languageDefault: 'a',
+    translations: {
+      a: {
+        x: 'x',
+        y: 'y'
+      }
+    }
+  })
+  const t = translator('a')
+  expect(t.x()).toBe('x')
+  expect(t.y()).toBe('y')
+})
+
 test('Should get basic translation and interpolate variables of defined language', () => {
   type Definition = {
     x: undefined

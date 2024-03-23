@@ -468,7 +468,7 @@ export type UktiTranslation<Definition extends UktiDefinition, Regions extends s
 
 type UktiLanguageDefault = 'en'
 
-export type UktiTranslations<Definition extends UktiDefinition, Languages extends UktiLanguages = UktiLanguages, LanguageDefault extends UktiLanguages = UktiLanguageDefault, Regions extends string = UktiRegions> =
+export type UktiTranslations<Definition extends UktiDefinition, Languages extends string = UktiLanguages, LanguageDefault extends string = UktiLanguageDefault, Regions extends string = UktiRegions> =
   Partial<Record<Languages, UktiTranslation<Definition, Regions>>>
   & Record<LanguageDefault, UktiTranslation<Definition, Regions>>
 
@@ -480,5 +480,5 @@ export type UktiTranslate<Definition extends UktiDefinition> = {
     : (...parameters: Definition[P] extends UktiDefinitionItemVariables ? Definition[P] : []) => string
 }
 
-export type UktiTranslator<Definition extends UktiDefinition, Languages extends UktiLanguages = UktiLanguages, Regions extends string = UktiRegions> =
+export type UktiTranslator<Definition extends UktiDefinition, Languages extends string = UktiLanguages, Regions extends string = UktiRegions> =
   (language: Languages, region?: Regions) => UktiTranslate<Definition>

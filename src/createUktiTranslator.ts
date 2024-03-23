@@ -11,8 +11,8 @@ import { renderUktiTemplate } from './renderUktiTemplate'
 
 const createUktiTranslator = <
   Definition extends UktiDefinition,
-  Languages extends UktiLanguages = UktiLanguages,
-  LanguageDefault extends UktiLanguages = typeof UKTI_LANGUAGE_DEFAULT,
+  Languages extends string = UktiLanguages,
+  LanguageDefault extends string = typeof UKTI_LANGUAGE_DEFAULT,
   Regions extends string = UktiRegions
 >(
     props: {

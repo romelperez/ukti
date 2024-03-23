@@ -90,7 +90,8 @@ The translations object definition can only have two levels of depth for simplic
 ## Constraints
 
 The available languages and default language can be specified to constraint the translations.
-All translations are optional, except the default one.
+All translations are optional, except the default one. They can be any string but
+[ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) codes are recommended.
 
 ```ts
 import { createUktiTranslator } from 'ukti'

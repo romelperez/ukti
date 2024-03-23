@@ -135,6 +135,49 @@ test('Should type-safe regions', () => {
   })
 })
 
+test('Should type-safe custom languages', () => {
+  type Definition = {
+    a: undefined
+  }
+  type Languages = 'x' | 'y'
+  type LanguageDefault = 'x'
+  createUktiTranslator<Definition, Languages, LanguageDefault>({
+    languageDefault: 'x',
+    translations: {
+      x: {
+        a: 'a'
+      }
+    }
+  })
+  createUktiTranslator<Definition, Languages, LanguageDefault>({
+    // @ts-expect-error test
+    languageDefault: 'z',
+    translations: {
+      x: {
+        a: 'a'
+      }
+    }
+  })
+  createUktiTranslator<Definition, Languages, LanguageDefault>({
+    languageDefault: 'x',
+    // @ts-expect-error test
+    translations: {
+      y: {
+        a: 'a'
+      }
+    }
+  })
+  createUktiTranslator<Definition, Languages, LanguageDefault>({
+    languageDefault: 'x',
+    translations: {
+      // @ts-expect-error test
+      z: {
+        a: 'a'
+      }
+    }
+  })
+})
+
 test('Should type-safe custom regions', () => {
   type Definition = {
     a: undefined
