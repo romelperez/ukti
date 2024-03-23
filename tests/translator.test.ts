@@ -107,6 +107,7 @@ test('Should interpolate defined variables for a specific nested translation', (
 
 test('Should get default language translation if no provided language translation is available', () => {
   type Definition = {
+    w: undefined
     x: {
       a: undefined
     }
@@ -114,6 +115,7 @@ test('Should get default language translation if no provided language translatio
   const translator = createUktiTranslator<Definition>({
     translations: {
       en: {
+        w: 'w',
         x: {
           a: 'x.a'
         }
@@ -121,6 +123,7 @@ test('Should get default language translation if no provided language translatio
     }
   })
   const t = translator('fr')
+  expect(t.w()).toBe('w')
   expect(t.x.a()).toBe('x.a')
 })
 
@@ -149,8 +152,9 @@ test('Should accept custom locales and default language', () => {
   expect(t.x.p()).toBe('x.p')
 })
 
-test('Should get default language translation if no provided language translation is available with custom locales', () => {
+test('Should get default language translation if no provided language translation is available with custom languages', () => {
   type Definition = {
+    w: undefined
     x: {
       a: undefined
     }
@@ -161,11 +165,13 @@ test('Should get default language translation if no provided language translatio
     languageDefault: 'hi',
     translations: {
       hi: {
+        w: 'hi.w',
         x: {
           a: 'hi.x.a'
         }
       },
       fr: {
+        w: 'fr.w',
         x: {
           a: 'fr.x.a'
         }
@@ -173,6 +179,7 @@ test('Should get default language translation if no provided language translatio
     }
   })
   const t = translator('zh')
+  expect(t.w()).toBe('hi.w')
   expect(t.x.a()).toBe('hi.x.a')
 })
 
@@ -275,6 +282,7 @@ test('Should get custom regional translation if provided', () => {
 
 test('Should get empty string if provided language translation is available with incomplete nesting', () => {
   type Definition = {
+    w: undefined
     x: {
       a: undefined
     }
@@ -285,11 +293,13 @@ test('Should get empty string if provided language translation is available with
     languageDefault: 'hi',
     translations: {
       hi: {
+        w: 'hi.w',
         x: {
           a: 'hi.x.a'
         }
       },
       fr: {
+        w: 'fr.w',
         x: {
           a: 'fr.x.a'
         }
@@ -298,6 +308,7 @@ test('Should get empty string if provided language translation is available with
     }
   })
   const t = translator('zh')
+  expect(t.w()).toBe('')
   expect(t.x.a()).toBe('')
 })
 
