@@ -14,7 +14,7 @@
     "browser": true,
     "node": true
   },
-  "extends": "standard-with-typescript",
+  "extends": "love",
   "rules": {
     "semi": ["off"],
     "@typescript-eslint/strict-boolean-expressions": ["off"],

@@ -6,8 +6,8 @@ import type {
   UktiTranslator,
   UktiTranslate
 } from './types'
-import { UKTI_LANGUAGE_DEFAULT } from './constants'
-import { renderUktiTemplate } from './renderUktiTemplate'
+import { UKTI_LANGUAGE_DEFAULT } from './constants.js'
+import { renderUktiTemplate } from './renderUktiTemplate.js'
 
 const createUktiTranslator = <
   Definition extends UktiDefinition,
