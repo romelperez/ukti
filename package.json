@@ -43,7 +43,7 @@
     "vitest": "^1.4.0"
   },
   "scripts": {
-    "prepare": "husky install",
+    "prepare": "husky",
     "clean": "rm -rf ./build && rm -f .tsbuildinfo",
     "build": "npm run build-esm && npm run build-cjs && npm run build-umd",
     "build-esm": "sh ./scripts/build-esm.sh",
