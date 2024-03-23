@@ -35,7 +35,9 @@
   "devDependencies": {
     "eslint": "^8.57.0",
     "eslint-config-love": "^43.1.0",
+    "eslint-config-prettier": "^9.1.0",
     "husky": "^9.0.11",
+    "prettier": "^3.2.5",
     "typescript": "5.2",
     "vite": "^5.2.4",
     "vitest": "^1.4.0"
@@ -48,11 +50,13 @@
     "build-cjs": "sh ./scripts/build-cjs.sh",
     "build-umd": "vite build",
     "dev": "sh ./scripts/build-esm.sh --watch",
+    "format-check": "prettier . --check",
+    "format": "prettier . --write",
     "lint": "eslint ./src/**/*.ts",
     "lint-fix": "eslint ./src/**/*.ts --fix",
     "test-types": "vitest --typecheck",
     "test-unit": "vitest",
-    "test": "npm run clean && npm run build && npm run lint && npm run test-types -- --run && npm run test-unit -- --run",
+    "test": "npm run clean && npm run build && npm run format-check && npm run lint && npm run test-types -- --run && npm run test-unit -- --run",
     "prepublishOnly": "npm run test"
   }
 }

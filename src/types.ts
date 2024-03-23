@@ -453,32 +453,48 @@ export type UktiTranslationData<Definition extends UktiDefinition> = {
 }
 
 type PartialDeep<T> = {
-  [P in keyof T]?: PartialDeep<T[P]>;
+  [P in keyof T]?: PartialDeep<T[P]>
 }
 
-export type UktiTranslationDataPartial<Definition extends UktiDefinition> =
-  PartialDeep<UktiTranslationData<Definition>>
+export type UktiTranslationDataPartial<Definition extends UktiDefinition> = PartialDeep<
+  UktiTranslationData<Definition>
+>
 
-export type UktiTranslation<Definition extends UktiDefinition, Regions extends string = UktiRegions> =
-  UktiTranslationData<Definition> & {
-    regions?: {
-      [R in Regions]?: UktiTranslationDataPartial<Definition>
-    }
+export type UktiTranslation<
+  Definition extends UktiDefinition,
+  Regions extends string = UktiRegions
+> = UktiTranslationData<Definition> & {
+  regions?: {
+    [R in Regions]?: UktiTranslationDataPartial<Definition>
   }
+}
 
 type UktiLanguageDefault = 'en'
 
-export type UktiTranslations<Definition extends UktiDefinition, Languages extends string = UktiLanguages, LanguageDefault extends string = UktiLanguageDefault, Regions extends string = UktiRegions> =
-  Partial<Record<Languages, UktiTranslation<Definition, Regions>>>
-  & Record<LanguageDefault, UktiTranslation<Definition, Regions>>
+export type UktiTranslations<
+  Definition extends UktiDefinition,
+  Languages extends string = UktiLanguages,
+  LanguageDefault extends string = UktiLanguageDefault,
+  Regions extends string = UktiRegions
+> = Partial<Record<Languages, UktiTranslation<Definition, Regions>>> &
+  Record<LanguageDefault, UktiTranslation<Definition, Regions>>
 
 export type UktiTranslate<Definition extends UktiDefinition> = {
   [P in keyof Definition]: Definition[P] extends Record<string, unknown>
     ? {
-        [Q in keyof Definition[P]]: (...parameters: Definition[P][Q] extends UktiDefinitionItemVariables ? Definition[P][Q] : []) => string
+        [Q in keyof Definition[P]]: (
+          ...parameters: Definition[P][Q] extends UktiDefinitionItemVariables
+            ? Definition[P][Q]
+            : []
+        ) => string
       }
-    : (...parameters: Definition[P] extends UktiDefinitionItemVariables ? Definition[P] : []) => string
+    : (
+        ...parameters: Definition[P] extends UktiDefinitionItemVariables ? Definition[P] : []
+      ) => string
 }
 
-export type UktiTranslator<Definition extends UktiDefinition, Languages extends string = UktiLanguages, Regions extends string = UktiRegions> =
-  (language: Languages, region?: Regions) => UktiTranslate<Definition>
+export type UktiTranslator<
+  Definition extends UktiDefinition,
+  Languages extends string = UktiLanguages,
+  Regions extends string = UktiRegions
+> = (language: Languages, region?: Regions) => UktiTranslate<Definition>

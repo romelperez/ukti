@@ -5,8 +5,7 @@ const showVariableError = (
   const error = `Ukti template requires defined variable "${variableName}" to render.`
   if (config?.throwIfError) {
     throw new Error(error)
-  }
-  else {
+  } else {
     console.error(error)
   }
 }
@@ -31,9 +30,7 @@ const getInterpolation = (
   }
 
   // Is string.
-  return value.trim()
-    .replace(/^["']/, '')
-    .replace(/["']$/, '')
+  return value.trim().replace(/^["']/, '').replace(/["']$/, '')
 }
 
 /**
@@ -64,10 +61,7 @@ const renderUktiTemplate = <Vars extends Record<string, unknown> = Record<string
   }
 
   return [...matches].reduce((text, item) => {
-    let result = item
-      .replace(/^{{/, '')
-      .replace(/}}$/, '')
-      .trim()
+    let result = item.replace(/^{{/, '').replace(/}}$/, '').trim()
 
     // Is basic interpolation.
     if (Object.keys(variables).includes(result)) {
@@ -96,13 +90,25 @@ const renderUktiTemplate = <Vars extends Record<string, unknown> = Record<string
 
         switch (comparator) {
           case '==':
-          case '===': isValid = x === y; break
+          case '===':
+            isValid = x === y
+            break
           case '!=':
-          case '!==': isValid = x !== y; break
-          case '>': isValid = x > y; break
-          case '>=': isValid = x >= y; break
-          case '<': isValid = x < y; break
-          case '<=': isValid = x <= y; break
+          case '!==':
+            isValid = x !== y
+            break
+          case '>':
+            isValid = x > y
+            break
+          case '>=':
+            isValid = x >= y
+            break
+          case '<':
+            isValid = x < y
+            break
+          case '<=':
+            isValid = x <= y
+            break
         }
       }
       // Conditional has truthy variable.

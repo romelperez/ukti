@@ -147,10 +147,12 @@ const translator = createUktiTranslator<Definition>({
     en: {
       friend: 'Friend',
       regions: {
-        US: { // United States
+        US: {
+          // United States
           friend: 'Dude'
         },
-        CA: { // Canada
+        CA: {
+          // Canada
           friend: 'Buddy'
         }
       }
@@ -158,10 +160,12 @@ const translator = createUktiTranslator<Definition>({
     es: {
       friend: 'Amigo',
       regions: {
-        CO: { // Colombia
+        CO: {
+          // Colombia
           friend: 'Parce'
         },
-        VN: { // Venezuela
+        VN: {
+          // Venezuela
           friend: 'Pana'
         }
       }
@@ -241,7 +245,7 @@ object methods before providing them to the translator.
 import { createUktiTranslator } from 'ukti'
 
 type Definition = {
-  list: [{ items: string, length: number, location: string }]
+  list: [{ items: string; length: number; location: string }]
 }
 
 const translator = createUktiTranslator<Definition>({
@@ -254,9 +258,11 @@ const translator = createUktiTranslator<Definition>({
 
 const t = translator('en')
 
-const items = new Intl
-  .ListFormat('en', { style: 'long', type: 'conjunction' })
-  .format(['motorcycle', 'bus', 'car'])
+const items = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' }).format([
+  'motorcycle',
+  'bus',
+  'car'
+])
 
 console.log(t.list({ items, length: items.length, location: 'countryside' }))
 // 'The land vehicles used are motorcycle, bus, and car in the countryside.'

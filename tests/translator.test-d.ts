@@ -4,7 +4,7 @@ import { createUktiTranslator } from '../'
 test('Should type-safe first level translation definitions', () => {
   type Definition = {
     x: undefined
-    y: [{ a: number, b: string }]
+    y: [{ a: number; b: string }]
   }
   const translator = createUktiTranslator<Definition>({
     translations: {
@@ -34,7 +34,7 @@ test('Should type-safe second level translation definitions', () => {
     w: undefined
     p: {
       x: undefined
-      y: [{ a: number, b: string }]
+      y: [{ a: number; b: string }]
     }
   }
   const translator = createUktiTranslator<Definition>({

@@ -10,7 +10,7 @@ export default defineConfig({
       entry: path.resolve(__dirname, 'src/index.ts'),
       formats: ['umd'],
       name: 'yrel',
-      fileName: 'yrel',
+      fileName: 'yrel'
     },
     rollupOptions: {
       external: [],

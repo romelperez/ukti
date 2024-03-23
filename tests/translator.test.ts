@@ -83,7 +83,7 @@ test('Should get translation of custom defined language', () => {
 test('Should get basic translation and interpolate variables of defined language', () => {
   type Definition = {
     x: undefined
-    y: [{ a: number, b: string }]
+    y: [{ a: number; b: string }]
   }
   const translator = createUktiTranslator<Definition>({
     translations: {

@@ -1,10 +1,6 @@
 {
   "root": true,
-  "ignorePatterns": [
-    "node_modules",
-    "build",
-    "vite.config.ts"
-  ],
+  "ignorePatterns": ["node_modules", "build", "vite.config.ts"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": "./tsconfig.json"
@@ -14,11 +10,10 @@
     "browser": true,
     "node": true
   },
-  "extends": "love",
+  "extends": ["love", "prettier"],
   "rules": {
     "semi": ["off"],
     "@typescript-eslint/strict-boolean-expressions": ["off"],
-    "@typescript-eslint/consistent-type-definitions": ["off"],
-    "@typescript-eslint/brace-style": ["error", "stroustrup"]
+    "@typescript-eslint/consistent-type-definitions": ["off"]
   }
 }
