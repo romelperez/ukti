@@ -54,9 +54,8 @@
     "format": "prettier . --write",
     "lint": "eslint ./src/**/*.ts",
     "lint-fix": "eslint ./src/**/*.ts --fix",
-    "test-types": "vitest --typecheck",
-    "test-unit": "vitest",
-    "test": "npm run clean && npm run build && npm run format-check && npm run lint && npm run test-types -- --run && npm run test-unit -- --run",
+    "test-unit": "vitest --typecheck",
+    "test": "npm run clean && npm run build && npm run format-check && npm run lint && npm run test-unit -- --run",
     "prepublishOnly": "npm run test"
   }
 }
